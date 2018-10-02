@@ -14,7 +14,7 @@ public class Game : MonoBehaviour {
     [SerializeField] Text sideBar;
     [SerializeField] AudioSource keyPressed;
     [SerializeField] InputField inputField;
-    bool isFlashing = true;
+    bool isFlashing = false;
 
     List<string> lines = new List<string>();
     int firstLineShown = 0;
@@ -22,16 +22,18 @@ public class Game : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        StartCoroutine(makeTextFlash());
         text.text = "";
 
-        AddToText("Press Down to launch");
 
-        //displayTextSlowly("ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ceci est une phrase tres interessante ", 0.005f);
+        
+
 
         inputField.onValueChanged.AddListener(OnKeyPressed);
         inputField.onEndEdit.AddListener(OnCommandEntered);
+        
+        StartCoroutine(boot());
 
+         
     }
 
     
@@ -136,7 +138,7 @@ public class Game : MonoBehaviour {
 
     void displayTextSlowly(string message, float delayBetweenLetters = 0.25f)
     {
-        inputField.interactable = false;
+        
         StartCoroutine(displayTextSlowlyMethod(message, delayBetweenLetters));
         
     }
@@ -151,7 +153,7 @@ public class Game : MonoBehaviour {
             yield return new WaitForSeconds(delayBetweenLetters);
 
         }
-        inputField.interactable = true;
+        
     }
 
     void OnKeyPressed( string hey)
@@ -163,14 +165,20 @@ public class Game : MonoBehaviour {
 
     void OnCommandEntered(string command)
     {
-        if (command == "help")
+
+        string[] fields = command.Split(' ');
+        if (fields[0] == "help")
         {
-            displayTextSlowly("Commands: \n log connect open close \n");
+            
+            displayTextSlowly("Commands: \n help log connect open close \n");
         }
+
+        if (command ==)
     }
 
     IEnumerator makeTextFlash()
     {
+        isFlashing = true;
         float incrementValue = 0.1f;
         float increment = incrementValue;
 
@@ -195,6 +203,27 @@ public class Game : MonoBehaviour {
         Color textColorFinal = text.color;
         textColorFinal.a = 1;
         text.color = textColorFinal;
+
+    }
+
+    IEnumerator boot()
+    {
+        inputField.interactable = false;
+        Debug.Log("booting");
+        AddToText("Press Up arrow to boot system");
+        
+       yield return makeTextFlash();
+        
+        this.clearText();
+        yield return displayTextSlowlyMethod("Connecting to main ship systems",0.10f);
+        yield return displayTextSlowlyMethod("...\n", 1f);
+        yield return displayTextSlowlyMethod("Main link failed, trying fall back procedure", 0.10f);
+        yield return displayTextSlowlyMethod("...\n", 1f);
+        yield return displayTextSlowlyMethod("Connection Sucessful, launching main command interpreter\n", 0.10f);
+        yield return displayTextSlowlyMethod("Terminal Operational, use help to view avaible commands\n", 0.10f);
+        AddToText("=========boot complete=========\n");
+        inputField.interactable = true;
+
 
     }
 }
